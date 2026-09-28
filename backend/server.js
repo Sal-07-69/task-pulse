@@ -14,7 +14,7 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Inizializza la tabella al primo avvio per evitare errori di connessione/query
+// Inizializza la tabella al primo avvio
 async function initDB() {
   try {
     await pool.query(`
@@ -32,7 +32,7 @@ async function initDB() {
 }
 initDB();
 
-// Test Endpoint: GET all tasks
+// GET: Recupera tutti i task
 app.get('/api/tasks', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
@@ -43,19 +43,31 @@ app.get('/api/tasks', async (req, res) => {
   }
 });
 
-// Create Endpoint: POST a new task
+// POST: Crea un nuovo task (ora gestisce anche la descrizione!)
 app.post('/api/tasks', async (req, res) => {
-  const { title } = req.body;
+  const { title, description } = req.body;
   if (!title) return res.status(400).json({ error: 'Title is required' });
 
   try {
     const result = await pool.query(
-      'INSERT INTO tasks (title) VALUES ($1) RETURNING *',
-      [title]
+      'INSERT INTO tasks (title, description) VALUES ($1, $2) RETURNING *',
+      [title, description || null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error('Errore Database POST:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE: Elimina un task per ID (AGGIUNTO)
+app.delete('/api/tasks/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query('DELETE FROM tasks WHERE id = $1', [id]);
+    res.status(200).json({ message: 'Task eliminato con successo' });
+  } catch (err) {
+    console.error('Errore Database DELETE:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
