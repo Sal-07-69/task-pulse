@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-// INSERISCI QUI IL LINK DEL TUO BACKEND SU RENDER (senza slash finale)
+// URL CORRETTO del tuo backend su Render
 const API_URL = 'https://task-pulse-isdu.onrender.com';
 
 export default function App() {
