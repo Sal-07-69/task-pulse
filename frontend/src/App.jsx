@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // INSERISCI QUI IL LINK DEL TUO BACKEND SU RENDER (senza slash finale)
-const API_URL = 'https://task-pulse.onrender.com';
+const API_URL = 'https://task-pulse-isdu.onrender.com';
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
